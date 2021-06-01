@@ -13,7 +13,7 @@ class AuthController extends Controller
         $this->validate($request, [
             'email' => 'required|string|email|max:255|unique:users,email',
             'name' => 'required|string|between:3,255',
-            'password' => 'required|string|between:8,255',
+            'password' => 'required|string|between:8,255|confirmed',
         ]);
 
         User::create([
@@ -24,6 +24,7 @@ class AuthController extends Controller
         ]);
         return response()->json(['message' => 'Your account has been created successfully', "success" => true]);
     }
+
     public function login(Request $request)
     {
         $this->validate($request, [
@@ -45,5 +46,10 @@ class AuthController extends Controller
         } else {
             return response()->json(['message' => 'Password mismatch'], 422);
         }
+    }
+
+    public function logout()
+    {
+        return auth()->user()->token()->revoke();
     }
 }
